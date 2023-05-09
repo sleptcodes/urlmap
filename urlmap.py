@@ -44,7 +44,7 @@ def urlmap(URL, maxThreads):
 
 	return
 
-
+# ARGPARSE... 
 ogURL = sys.argv[1]
 
 try:
