@@ -22,7 +22,6 @@ def req(URL):
 # 
 # For each word in wordlist, try to connect to [url]/[word]:
 # 
-
 def urlmap(URL, maxThreads):
 	# Parameter type: string
 	# return type   : null 
@@ -33,7 +32,7 @@ def urlmap(URL, maxThreads):
 			with open('extensions.txt') as extensions:
 				for ext in extensions:
 					if threading.active_count() <= maxThreads:
-						t =  t1 = threading.Thread(target=req, args=(URL + "/" + word + ext,))
+						t = threading.Thread(target=req, args=(URL + "/" + word + ext,))
 						threads.append(t)
 						t.start()
 					else:
@@ -44,33 +43,39 @@ def urlmap(URL, maxThreads):
 
 	return
 
-# ARGPARSE... 
+def scan_init(URL):
+	print("Beginning scan\n")
+	maxThreads = 10
+
+	if len(sys.argv) == 3:
+		try:
+			maxThreads = int(sys.argv[2])
+		except:
+			print("Unable to parse [MAX THREADS] argument correctly. Defaulting to 10.\n")
+
+	else:
+		print("Defaulting to 10 threads.\n")
+		
+
+	# valid url 
+	urlmap(ogURL, maxThreads)
+
+
 ogURL = sys.argv[1]
 
 try:
 	r = requests.get(ogURL)
 
 	if r.ok:
-		print("Beginning scan\n")
-		maxThreads = 10
-
-		if sys.argv[2]:
-			try:
-				maxThreads = int(sys.argv[2])
-			except:
-				print("Unable to parse [MAX THREADS] argument correctly. Defaulting to 10.\n")
-
-		else:
-			print("Defaulting to 10 threads.\n")
-
-		# valid url 
-		urlmap(ogURL, maxThreads)
+		scan_init(ogURL)
 
 	else:
-		print("Cannot GET specified webfile from host: responded with status " + str(r.status_code))
+		print("Cannot GET specified webfile from host: responded with status " + str(r.status_code) + "\nContinue anyawy? (y/n)")
+		if input() == 'y':
+			scan_init(ogURL)
 
 except requests.exceptions.RequestException: 
-	print("Cannot GET provided target (malformed url).\nUSAGE: python urlmap.py [target] [max threads (optional)]")
+	print("Cannot GET provided target (malformed url).\nUSAGE: python urlmap.py [target] [max threads (optional)] [referer URL (optional)]")
 
 except KeyboardInterrupt:
 	print("Quitting Scan")
