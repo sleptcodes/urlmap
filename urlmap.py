@@ -11,7 +11,7 @@ import threading
 # response status 401 OR 407                         ---> print [url]/[word]
 def req(URL):
 	r = requests.get(URL)
-	if (r.status_code < 400 or r.status_code == 405 or r.status_code == 401 or r.status_code == 407) and URL != r.url:
+	if r.status_code <= 400 or r.status_code == 405 or r.status_code == 401 or r.status_code == 407:
 		print(str(r.status_code) + ": " + URL + "\n")
 	elif r.status_code == 403:
 		print(str(r.status_code) + ": " + URL + "\n")
